@@ -10,52 +10,14 @@ npx stagehand-ai
 
 ## 🛠️ Usage
 
-```typescript
-import { Stagehand } from "@browserbasehq/stagehand";
-import StagehandConfig from "./stagehand.config";
+- `cli.ts` is the entry point for the CLI.
+- `index.ts` contains the actual agent loop.
 
-const stagehand = new Stagehand(StagehandConfig);
-await stagehand.init();
+## How it works
 
-const page = stagehand.page; // Playwright Page with act, extract, and observe methods
-const context = stagehand.context; // Playwright BrowserContext
-```
+![agent.png](./agent.png)
 
-### Key Features
-
-- **Observe**: Get actions to execute based on natural language instructions
-- **Act**: Execute actions on web pages
-- **Extract**: Extract data from web pages using natural language
-
-### Example Usage
-
-```typescript
-// Click a button
-const results = await page.observe("Click the sign in button");
-await page.act(results[0]);
-
-// Extract data
-const { text } = await page.extract({
-  instruction: "extract the sign in button text",
-  schema: z.object({
-    text: z.string(),
-  }),
-  useTextExtract: true,
-});
-```
-
-## 🔧 Dependencies
-
-This package requires:
-
-- Node.js (Latest LTS version recommended)
-- pnpm (v9.15.0 or later)
-- Playwright browsers (automatically installed via postinstall script)
-
-## 📝 Environment Variables
-
-Make sure to set up your environment variables in a `.env` file. Required variables will depend on your specific configuration.
-
-## 📄 License
-
-MIT
+- Trajectory Model: Claude 3.5 Sonnet
+- Action Model: GPT 4o Mini
+- Structured Output Model: GPT 4o Mini
+- CUA Model: OpenAI Computer Use Preview
