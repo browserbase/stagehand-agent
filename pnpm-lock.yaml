@@ -18,8 +18,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0
       '@browserbasehq/stagehand':
-        specifier: 1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e
-        version: 1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e(@playwright/test@1.51.0)(deepmerge@4.3.1)(dotenv@16.4.7)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(zod@3.24.2)
+        specifier: 2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81
+        version: 2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81(@playwright/test@1.51.0)(deepmerge@4.3.1)(dotenv@16.4.7)(openai@4.89.0(ws@8.18.1)(zod@3.24.2))(zod@3.24.2)
       '@playwright/test':
         specifier: ^1.49.1
         version: 1.51.0
@@ -32,6 +32,9 @@ importers:
       chalk:
         specifier: ^5.3.0
         version: 5.4.1
+      changeset:
+        specifier: ^0.2.6
+        version: 0.2.6
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -92,8 +95,8 @@ packages:
   '@browserbasehq/sdk@2.3.0':
     resolution: {integrity: sha512-H2nu46C6ydWgHY+7yqaP8qpfRJMJFVGxVIgsuHe1cx9HkfJHqzkuIqaK/k8mU4ZeavQgV5ZrJa0UX6MDGYiT4w==}
 
-  '@browserbasehq/stagehand@1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e':
-    resolution: {integrity: sha512-0D4p1SXHJ1SQ7Z6DVua/p1ji3cfUevvWPfHfO/vL/5zDsPvQlsG7mByTFAk0T+dBg6UGKcEoM112oWOASJiLJQ==}
+  '@browserbasehq/stagehand@2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81':
+    resolution: {integrity: sha512-5oPhTu51JT0XoW4z1CgAiznvD4qFSMThsaF3ZrqBkdyeLMMHoVpkh2Il+6rL0H2i7yc23QaWkWSQscjrZ8QyLA==}
     peerDependencies:
       '@playwright/test': ^1.42.1
       deepmerge: ^4.3.1
@@ -321,6 +324,9 @@ packages:
     resolution: {integrity: sha512-zgVZuo2WcZgfUEmsn6eO3kINexW8RAE4maiQ8QNs8CtpPCSyMiYsULR3HQYkm3w8FIA3SberyMJMSldGsW+U3w==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
+  changeset@0.2.6:
+    resolution: {integrity: sha512-d21ym9zLPOKMVhIa8ulJo5IV3QR2NNdK6BWuwg48qJA0XSQaMeDjo1UGThcTn7YDmU08j3UpKyFNvb3zplk8mw==}
+
   cli-boxes@3.0.0:
     resolution: {integrity: sha512-/lzGpEWL/8PfI0BmBOPRwp0c/wFNX1RdUML3jK/RcSBA9T8mZDdQpqYBKtCFTOfQbwPqWEOpjqW+Fnayc0969g==}
     engines: {node: '>=10'}
@@ -486,8 +492,8 @@ packages:
       encoding:
         optional: true
 
-  openai@4.87.3:
-    resolution: {integrity: sha512-d2D54fzMuBYTxMW8wcNmhT1rYKcTfMJ8t+4KjH2KtvYenygITiGBgHoIrzHwnDQWW+C5oCA+ikIR2jgPCFqcKQ==}
+  openai@4.89.0:
+    resolution: {integrity: sha512-XNI0q2l8/Os6jmojxaID5EhyQjxZgzR2gWcpEjYWK5hGKwE7AcifxEY7UNwFDDHJQXqeiosQ0CJwQN+rvnwdjA==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -559,6 +565,12 @@ packages:
     resolution: {integrity: sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==}
     engines: {node: '>=14.17'}
     hasBin: true
+
+  udc@1.0.1:
+    resolution: {integrity: sha512-jv+D9de1flsum5QkFtBdjyppCQAdz9kTck/0xST5Vx48T9LL2BYnw0Iw77dSKDQ9KZ/PS3qPO1vfXHDpLZlxcQ==}
+
+  underscore@1.13.7:
+    resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
@@ -672,14 +684,14 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@browserbasehq/stagehand@1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e(@playwright/test@1.51.0)(deepmerge@4.3.1)(dotenv@16.4.7)(openai@4.87.3(ws@8.18.1)(zod@3.24.2))(zod@3.24.2)':
+  '@browserbasehq/stagehand@2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81(@playwright/test@1.51.0)(deepmerge@4.3.1)(dotenv@16.4.7)(openai@4.89.0(ws@8.18.1)(zod@3.24.2))(zod@3.24.2)':
     dependencies:
       '@anthropic-ai/sdk': 0.39.0
       '@browserbasehq/sdk': 2.3.0
       '@playwright/test': 1.51.0
       deepmerge: 4.3.1
       dotenv: 16.4.7
-      openai: 4.87.3(ws@8.18.1)(zod@3.24.2)
+      openai: 4.89.0(ws@8.18.1)(zod@3.24.2)
       ws: 8.18.1
       zod: 3.24.2
       zod-to-json-schema: 3.24.3(zod@3.24.2)
@@ -831,6 +843,11 @@ snapshots:
   camelcase@8.0.0: {}
 
   chalk@5.4.1: {}
+
+  changeset@0.2.6:
+    dependencies:
+      udc: 1.0.1
+      underscore: 1.13.7
 
   cli-boxes@3.0.0: {}
 
@@ -993,7 +1010,7 @@ snapshots:
     dependencies:
       whatwg-url: 5.0.0
 
-  openai@4.87.3(ws@8.18.1)(zod@3.24.2):
+  openai@4.89.0(ws@8.18.1)(zod@3.24.2):
     dependencies:
       '@types/node': 18.19.80
       '@types/node-fetch': 2.6.12
@@ -1062,6 +1079,10 @@ snapshots:
   type-fest@4.37.0: {}
 
   typescript@5.8.2: {}
+
+  udc@1.0.1: {}
+
+  underscore@1.13.7: {}
 
   undici-types@5.26.5: {}
 
