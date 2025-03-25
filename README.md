@@ -1,41 +1,65 @@
-# 🤘 Welcome to Stagehand!
+# 🤘 Stagehand Agent
 
-Hey! This is a project built with [Stagehand](https://github.com/browserbase/stagehand).
+A powerful browser automation agent built with [Stagehand](https://github.com/browserbase/stagehand) that amplifies Playwright with `act`, `extract`, and `observe` capabilities.
 
-You can build your own web agent using: `npx create-browser-app`!
-
-## Setting the Stage
-
-Stagehand is an SDK for automating browsers. It's built on top of [Playwright](https://playwright.dev/) and provides a higher-level API for better debugging and AI fail-safes.
-
-## Curtain Call
-
-Get ready for a show-stopping development experience. Just run:
+## 🚀 Installation
 
 ```bash
-npm install && npm start
+npm install web-agent
+# or
+pnpm add web-agent
+# or
+yarn add web-agent
 ```
 
-## What's Next?
+## 🛠️ Usage
 
-### Add your API keys
+```typescript
+import { Stagehand } from "@browserbasehq/stagehand";
+import StagehandConfig from "./stagehand.config";
 
-Required API keys/environment variables are in the `.env.example` file. Copy it to `.env` and add your API keys.
+const stagehand = new Stagehand(StagehandConfig);
+await stagehand.init();
 
-```bash
-cp .env.example .env && nano .env # Add your API keys to .env
+const page = stagehand.page; // Playwright Page with act, extract, and observe methods
+const context = stagehand.context; // Playwright BrowserContext
 ```
 
-### Custom .cursorrules
+### Key Features
 
-We have custom .cursorrules for this project. It'll help quite a bit with writing Stagehand easily.
+- **Observe**: Get actions to execute based on natural language instructions
+- **Act**: Execute actions on web pages
+- **Extract**: Extract data from web pages using natural language
 
-### Run on Browserbase
+### Example Usage
 
-To run on Browserbase, add your API keys to .env and change `env: "LOCAL"` to `env: "BROWSERBASE"` in [stagehand.config.ts](stagehand.config.ts).
+```typescript
+// Click a button
+const results = await page.observe("Click the sign in button");
+await page.act(results[0]);
 
-### Use Anthropic Claude 3.5 Sonnet
+// Extract data
+const { text } = await page.extract({
+  instruction: "extract the sign in button text",
+  schema: z.object({
+    text: z.string(),
+  }),
+  useTextExtract: true,
+});
+```
 
-1. Add your API key to .env
-2. Change `modelName: "gpt-4o"` to `modelName: "claude-3-5-sonnet-latest"` in [stagehand.config.ts](stagehand.config.ts)
-3. Change `modelClientOptions: { apiKey: process.env.OPENAI_API_KEY }` to `modelClientOptions: { apiKey: process.env.ANTHROPIC_API_KEY }` in [stagehand.config.ts](stagehand.config.ts)
+## 🔧 Dependencies
+
+This package requires:
+
+- Node.js (Latest LTS version recommended)
+- pnpm (v9.15.0 or later)
+- Playwright browsers (automatically installed via postinstall script)
+
+## 📝 Environment Variables
+
+Make sure to set up your environment variables in a `.env` file. Required variables will depend on your specific configuration.
+
+## 📄 License
+
+MIT

@@ -1,5 +1,8 @@
+#!/usr/bin/env node
+
 // Set NODE_NO_WARNINGS to suppress deprecation warnings
 process.env.NODE_NO_WARNINGS = "1";
+process.env.NODE_OPTIONS = "--no-deprecation";
 
 import readline from "readline";
 import { main } from "./index.js";
@@ -60,12 +63,27 @@ async function checkAndPromptApiKeys() {
 const queryFromArgs = process.argv[2];
 
 async function run() {
+  console.log("🤘 Welcome to", chalk.yellow("Stagehand!"), "🤘");
+  console.log(chalk.gray("\nLoading..."));
+  const spinner = ["|", "/", "-", "\\"];
+  let i = 0;
+  const loadingInterval = setInterval(() => {
+    process.stdout.write(`\r${spinner[i++ % spinner.length]}`);
+  }, 100);
+  // Clear interval after 2 seconds
+  await new Promise((resolve) =>
+    setTimeout(() => {
+      clearInterval(loadingInterval);
+      process.stdout.write("\r"); // Clear the spinner
+      resolve(true);
+    }, 3000)
+  );
   await checkAndPromptApiKeys();
 
   if (queryFromArgs) {
     main(queryFromArgs);
   } else {
-    const query = await question("\n\nEnter your query: ");
+    const query = await question(chalk.yellow("\n\nEnter your query: "));
     main(query);
     rl.close();
   }

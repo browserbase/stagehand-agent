@@ -1,21 +1,42 @@
 {
-  "name": "agent",
+  "name": "stagehand-ai",
+  "version": "1.0.0",
+  "description": "A web automation agent built with Stagehand",
   "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "stagehand-ai": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
-    "start": "tsx index.ts",
+    "start": "NODE_NO_WARNINGS=1 tsx cli.ts",
     "cli": "NODE_NO_WARNINGS=1 tsx cli.ts",
-    "postinstall": "playwright install"
+    "postinstall": "playwright install",
+    "prepublishOnly": "pnpm build"
   },
+  "keywords": [
+    "web-automation",
+    "stagehand",
+    "playwright",
+    "ai",
+    "browser"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.1",
     "@ai-sdk/openai": "^1.3.1",
     "@browserbasehq/sdk": "2.3.0",
-    "@browserbasehq/stagehand": "1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e",
+    "@browserbasehq/stagehand": "2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81",
     "@playwright/test": "^1.49.1",
     "ai": "^4.2.2",
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",
+    "changeset": "^0.2.6",
     "dotenv": "^16.4.7",
     "zod": "^3.22.4"
   },

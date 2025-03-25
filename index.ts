@@ -67,6 +67,7 @@ export async function main(
     },
     onFinish: async (result) => {
       console.log("\n\n\n---FINISHED---");
+      await stagehand.close();
       const cleanedResult = result.response.messages.map((m) => {
         if (m.role === "tool") {
           return {
