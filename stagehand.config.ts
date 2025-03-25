@@ -1,12 +1,12 @@
 import type { ConstructorParams, LogLine } from "@browserbasehq/stagehand";
 import dotenv from "dotenv";
-false;
-false;
+false
+false
 
 dotenv.config();
 
 const StagehandConfig: ConstructorParams = {
-  env: "BROWSERBASE",
+  env: "LOCAL",
   apiKey: process.env.BROWSERBASE_API_KEY /* API key for authentication */,
   projectId: process.env.BROWSERBASE_PROJECT_ID /* Project identifier */,
   debugDom: undefined /* Enable DOM debugging features */,
@@ -16,15 +16,16 @@ const StagehandConfig: ConstructorParams = {
   domSettleTimeoutMs: 30_000 /* Timeout for DOM to settle in milliseconds */,
   browserbaseSessionCreateParams: {
     projectId: process.env.BROWSERBASE_PROJECT_ID!,
-    proxies: true,
   },
   enableCaching: undefined /* Enable caching functionality */,
   browserbaseSessionID:
     undefined /* Session ID for resuming Browserbase sessions */,
-  modelName: "gpt-4o" /* Name of the model to use */,
-  modelClientOptions: {
-    apiKey: process.env.OPENAI_API_KEY,
-  } /* Configuration options for the model client */,
+  modelName: "claude-3-7-sonnet-20250219" /* Name of the model to use */,
+      modelClientOptions: {
+        apiKey: process.env.ANTHROPIC_API_KEY,
+      } /* Configuration options for the model client */,
+  
+  
 };
 
 export default StagehandConfig;

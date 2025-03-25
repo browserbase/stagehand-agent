@@ -1,15 +1,19 @@
 {
-  "name": "agent-mode",
+  "name": "agent",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "tsx index.ts",
+    "cli": "NODE_NO_WARNINGS=1 tsx cli.ts",
     "postinstall": "playwright install"
   },
   "dependencies": {
-    "@browserbasehq/sdk": "2.4.0",
-    "@browserbasehq/stagehand": "alpha",
+    "@ai-sdk/anthropic": "^1.2.1",
+    "@ai-sdk/openai": "^1.3.1",
+    "@browserbasehq/sdk": "2.3.0",
+    "@browserbasehq/stagehand": "1.15.0-alpha-73d67368b88002c17814e46e75a99456bf355c4e",
     "@playwright/test": "^1.49.1",
+    "ai": "^4.2.2",
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",
     "dotenv": "^16.4.7",
