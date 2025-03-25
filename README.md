@@ -5,11 +5,7 @@ A powerful browser automation agent built with [Stagehand](https://github.com/br
 ## 🚀 Installation
 
 ```bash
-npm install web-agent
-# or
-pnpm add web-agent
-# or
-yarn add web-agent
+npx stagehand-ai
 ```
 
 ## 🛠️ Usage
