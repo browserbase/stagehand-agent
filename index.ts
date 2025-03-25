@@ -1,54 +1,108 @@
-/**
- * 🤘 Welcome to Stagehand!
- *
- * You probably DON'T NEED TO BE IN THIS FILE
- *
- * You're probably instead looking for the main() function in main.ts
- *
- * This is run when you do npm run start; it just calls main()
- *
- */
-
+import { generateObject, LanguageModel, streamText } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { Stagehand } from "@browserbasehq/stagehand";
 import StagehandConfig from "./stagehand.config.js";
-import chalk from "chalk";
-import { main } from "./main.js";
-import boxen from "boxen";
+import { getTools } from "./tools.js";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+import readline from "readline";
 
-async function run() {
+/**
+ * Main function that executes an agent trajectory with Stagehand
+ * @param query The prompt to be used for the agent trajectory
+ * @param schema Optional Zod schema defining the structure of the output from the agent trajectory
+ * @param config Configuration object for the models used
+ * @param config.actionModel The model used to perform Stagehand actions (act/extract/observe)
+ * @param config.structuredOutputModel The model used to generate structured output from the agent trajectory
+ * @param config.cuaModel The model used to perform CUA actions (act/extract/observe)
+ */
+export async function main(
+  query: string,
+  schema?: z.ZodTypeAny,
+  config: {
+    trajectoryModel: LanguageModel;
+    actionModel: LanguageModel;
+    structuredOutputModel: LanguageModel;
+    cuaModel:
+      | "openai/computer-use-preview"
+      | "anthropic/claude-3-7-sonnet-latest"
+      | "anthropic/claude-3-5-sonnet-latest";
+  } = {
+    actionModel: openai("gpt-4o-mini"),
+    structuredOutputModel: openai("gpt-4o-mini"),
+    cuaModel: "openai/computer-use-preview",
+    trajectoryModel: anthropic("claude-3-7-sonnet-latest"),
+  }
+) {
+  const prompt = `You are a helpful assistant that can browse the web.
+		You are given the following prompt:
+		${query}
+		${
+      schema
+        ? `Answer the prompt and be sure to contain a detailed response that covers at least the following requested data: ${JSON.stringify(
+            schema
+          )}`
+        : ""
+    }
+		You may need to browse the web to find the answer.
+		You may not need to browse the web at all; you may already know the answer.
+		Do not ask follow up questions; I trust your judgement.
+	  `;
   const stagehand = new Stagehand({
     ...StagehandConfig,
   });
   await stagehand.init();
-
-  if (StagehandConfig.env === "BROWSERBASE" && stagehand.browserbaseSessionID) {
-    console.log(
-      boxen(
-        `View this session live in your browser: \n${chalk.blue(
-          `https://browserbase.com/sessions/${stagehand.browserbaseSessionID}`
-        )}`,
-        {
-          title: "Browserbase",
-          padding: 1,
-          margin: 3,
-        }
-      )
-    );
-  }
-
   const page = stagehand.page;
-  const context = stagehand.context;
-  await main({
-    page,
-    context,
-    stagehand,
-  });
-  await stagehand.close();
-  console.log(
-    `\n🤘 Thanks for using Stagehand! Create an issue if you have any feedback: ${chalk.blue(
-      "https://github.com/browserbase/stagehand/issues/new"
-    )}\n`
-  );
-}
 
-run();
+  const result = streamText({
+    model: config.trajectoryModel, // ONLY CLAUDE IS SUPPORTED FOR TRAJECTORY
+    tools: getTools(page, stagehand, config.actionModel),
+    toolCallStreaming: true,
+    system:
+      "You are a helpful assistant that can browse the web. You are given a prompt and you may need to browse the web to find the answer. You may not need to browse the web at all; you may already know the answer. Do not ask follow up questions; I trust your judgement.",
+    prompt,
+    maxSteps: 50,
+    onStepFinish: (step) => {
+      // Add token usage data here
+    },
+    onFinish: async (result) => {
+      console.log("\n\n\n---FINISHED---");
+      const cleanedResult = result.response.messages.map((m) => {
+        if (m.role === "tool") {
+          return {
+            ...m,
+            // Remove screenshot content
+            content: m.content.map((c) => {
+              if (c.toolName === "screenshot") {
+                return {
+                  ...c,
+                  result: [],
+                  experimental_content: [],
+                };
+              }
+              return c;
+            }),
+          };
+        }
+        return m;
+      });
+      if (schema) {
+        console.log("Generating structured output...");
+        const structuredResult = await generateObject({
+          model: config.structuredOutputModel,
+          prompt: `You are given the following data of a web browsing session: 
+			${JSON.stringify(cleanedResult)}
+			Extract the requested data. If there is insufficient information, make it very clear that you are unable to adequately extract the requested data.
+			If multiple pieces of information are requested, extract as much as you can without assuming or making up information.`,
+          output: "no-schema",
+        });
+        console.log("Structured output:", structuredResult);
+      }
+    },
+  });
+
+  // Log the text stream
+  for await (const textPart of result.textStream) {
+    process.stdout.write(textPart);
+  }
+}
