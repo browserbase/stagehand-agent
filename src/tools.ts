@@ -1,5 +1,5 @@
-import { Page, Stagehand } from "@browserbasehq/stagehand";
-import { generateId, generateText, LanguageModel, tool } from "ai";
+import { AgentProviderType, Page, Stagehand } from "@browserbasehq/stagehand";
+import { generateText, LanguageModel, tool } from "ai";
 import { z } from "zod";
 
 const log = (action: string, ...args: unknown[]) => {
@@ -13,10 +13,16 @@ const log = (action: string, ...args: unknown[]) => {
   );
 };
 
+export type CUAModel =
+  | "openai/computer-use-preview"
+  | "anthropic/claude-3-7-sonnet-latest"
+  | "anthropic/claude-3-5-sonnet-latest";
+
 export const getTools = (
   page: Page,
   stagehand: Stagehand,
-  model: LanguageModel
+  cuaModel: CUAModel,
+  actionModel: LanguageModel
 ) => ({
   stagehand_close: tool({
     description: "End the browser session",
@@ -106,19 +112,23 @@ export const getTools = (
           with sensitive data or dynamic content. For example, if you're logging in to a website, 
           you can use a variable for the password. When using variables, you MUST have the variable
           key in the action template. For example: {"action": "Fill in the password", "variables": {"password": "123456"}}`),
-      hasIframe: z
-        .boolean()
-        .describe(
-          "Whether the page contains an iframe. Use the stagehand_iframe tool to check."
-        ),
     }),
-    execute: async ({ action, variables, hasIframe }) => {
-      log("ACT", { action, variables, hasIframe });
+    execute: async ({ action, variables }) => {
+      log("ACT", { action, variables });
+      let hasIframe = false;
+      try {
+        const observations = await page.observe(action);
+        hasIframe =
+          observations.filter((x) => x.method === "not-supported").length > 0;
+      } catch (e) {
+        log("AGENT", "Error observing, using CUA agent");
+        hasIframe = true;
+      }
       if (hasIframe) {
-        log("AGENT", "Using CUA agent");
+        const [provider, model] = cuaModel.split("/");
         const agent = stagehand.agent({
-          provider: "anthropic",
-          model: "claude-3-7-sonnet-20250219",
+          provider: provider as AgentProviderType,
+          model,
           instructions: `You are a helpful assistant that can use a web browser.
         	  You are currently on the following page: ${page.url()}.
         	  Do not ask follow up questions, the user will trust your judgement.`,
@@ -137,7 +147,6 @@ export const getTools = (
           page.act({
             action,
             variables,
-            slowDomBasedAct: false,
           }),
           new Promise((resolve) =>
             setTimeout(async () => {
@@ -191,7 +200,7 @@ export const getTools = (
       if (searchInstruction) {
         log("EXTRACT", "Using search instruction:", searchInstruction);
         const result = await generateText({
-          model: model,
+          model: actionModel,
           prompt: `You want to extract the following data from the page: ${searchInstruction}. 
 		  Extract the data from the page. If there is insufficient information, make it very clear that you are unable to adequately extract the requested data.
 		  If multiple pieces of information are requested, extract as much as you can without assuming or making up information.

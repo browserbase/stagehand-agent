@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "start": "NODE_NO_WARNINGS=1 tsx cli.ts",
-    "cli": "NODE_NO_WARNINGS=1 tsx cli.ts",
+    "start": "NODE_NO_WARNINGS=1 tsx index.ts",
+    "cli": "NODE_NO_WARNINGS=1 tsx index.ts",
     "postinstall": "playwright install",
     "prepublishOnly": "pnpm build"
   },
@@ -30,14 +30,14 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.1",
     "@ai-sdk/openai": "^1.3.1",
-    "@browserbasehq/sdk": "2.3.0",
-    "@browserbasehq/stagehand": "2.0.0-alpha-b8beaec451a03eaa5d12281fe7c8d4eb9c9d7e81",
-    "@playwright/test": "^1.49.1",
+    "@browserbasehq/sdk": "2.5.0",
+    "@browserbasehq/stagehand": "2.0.0-alpha-affa5646658399ab71ed08c1b9ce0fd776b46fca",
     "ai": "^4.2.2",
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",
     "changeset": "^0.2.6",
     "dotenv": "^16.4.7",
+    "playwright": "^1.51.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {

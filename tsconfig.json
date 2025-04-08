@@ -12,6 +12,13 @@
     "allowImportingTsExtensions": false,
     "noEmit": false
   },
-  "include": ["*.ts", "api", "examples/run.ts"],
+  "include": [
+    "*.ts",
+    "api",
+    "examples/run.ts",
+    "src/agent.ts",
+    "src/aisdk_client.ts",
+    "src/tools.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

@@ -4,16 +4,18 @@ A powerful browser automation agent built with [Stagehand](https://github.com/br
 
 ## 🚀 Installation
 
+## 🛠️ Usage
+
+You can run the agent without installing anything! Just run the following command:
+
 ```bash
 npx stagehand-ai
 ```
 
-## 🛠️ Usage
-
-- `cli.ts` is the entry point for the CLI.
-- `index.ts` contains the actual agent loop.
-
 ## How it works
+
+- `index.ts` is the entry point for the CLI.
+- `src/agent.ts` contains the actual agent loop logic.
 
 ![agent.png](./agent.png)
 
