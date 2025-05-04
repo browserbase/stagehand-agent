@@ -6,7 +6,7 @@ false
 dotenv.config();
 
 const StagehandConfig: ConstructorParams = {
-  env: "LOCAL",
+  env: "BROWSERBASE",
   apiKey: process.env.BROWSERBASE_API_KEY /* API key for authentication */,
   projectId: process.env.BROWSERBASE_PROJECT_ID /* Project identifier */,
   debugDom: undefined /* Enable DOM debugging features */,
@@ -21,11 +21,11 @@ const StagehandConfig: ConstructorParams = {
   browserbaseSessionID:
     undefined /* Session ID for resuming Browserbase sessions */,
   modelName: "claude-3-7-sonnet-20250219" /* Name of the model to use */,
-      modelClientOptions: {
-        apiKey: process.env.ANTHROPIC_API_KEY,
-      } /* Configuration options for the model client */,
-  
-  
+  modelClientOptions: {
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  } /* Configuration options for the model client */,
+
+
 };
 
 export default StagehandConfig;
@@ -69,11 +69,10 @@ export function logLineToString(logLine: LogLine): string {
     }
 
     // If we want to hide auxiliary information, we don't add it to the log
-    return `${timestamp}::[stagehand:${logLine.category}] ${logLine.message} ${
-      logLine.auxiliary && !HIDE_AUXILIARY
+    return `${timestamp}::[stagehand:${logLine.category}] ${logLine.message} ${logLine.auxiliary && !HIDE_AUXILIARY
         ? JSON.stringify(logLine.auxiliary)
         : ""
-    }`;
+      }`;
   } catch (error) {
     console.error(`Error logging line:`, error);
     return "error logging line";

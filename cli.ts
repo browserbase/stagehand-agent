@@ -8,6 +8,8 @@ import readline from "readline";
 import { main } from "./index.js";
 import dotenv from "dotenv";
 import chalk from "chalk";
+import { Stagehand } from "@browserbasehq/stagehand";
+import StagehandConfig from "./stagehand.config.js";
 
 // Load environment variables
 dotenv.config();
@@ -63,28 +65,27 @@ async function checkAndPromptApiKeys() {
 const queryFromArgs = process.argv[2];
 
 async function run() {
-  console.log("🤘 Welcome to", chalk.yellow("Stagehand!"), "🤘");
-  console.log(chalk.gray("\nLoading..."));
-  const spinner = ["|", "/", "-", "\\"];
-  let i = 0;
-  const loadingInterval = setInterval(() => {
-    process.stdout.write(`\r${spinner[i++ % spinner.length]}`);
-  }, 100);
-  // Clear interval after 2 seconds
-  await new Promise((resolve) =>
-    setTimeout(() => {
-      clearInterval(loadingInterval);
-      process.stdout.write("\r"); // Clear the spinner
-      resolve(true);
-    }, 3000)
-  );
+  console.log("🤘 Welcome to Stagehand!");
+  console.log("Setting up your environment...");
   await checkAndPromptApiKeys();
 
+  const stagehand = new Stagehand({
+    ...StagehandConfig,
+  });
+  await stagehand.init();
+
+  if (stagehand.browserbaseSessionID) {
+    console.log(
+      `Browserbase session: https://www.browserbase.com/sessions/${stagehand.browserbaseSessionID}`
+    );
+  }
+
   if (queryFromArgs) {
-    main(queryFromArgs);
+    main(queryFromArgs, stagehand);
   } else {
     const query = await question(chalk.yellow("\n\nEnter your query: "));
-    main(query);
+    await main(query, stagehand);
+    await stagehand.close();
     rl.close();
   }
 }
