@@ -1,11 +1,9 @@
 import { generateObject, LanguageModel, streamText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
 import { Stagehand } from "@browserbasehq/stagehand";
-import StagehandConfig from "./stagehand.config.js";
 import { getTools } from "./tools.js";
 import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import { z } from "zod";
-import readline from "readline";
 
 /**
  * Main function that executes an agent trajectory with Stagehand
@@ -18,6 +16,7 @@ import readline from "readline";
  */
 export async function main(
   query: string,
+  stagehand: Stagehand,
   schema?: z.ZodTypeAny,
   config: {
     trajectoryModel: LanguageModel;
@@ -31,7 +30,8 @@ export async function main(
     actionModel: openai("gpt-4o-mini"),
     structuredOutputModel: openai("gpt-4o-mini"),
     cuaModel: "openai/computer-use-preview",
-    trajectoryModel: anthropic("claude-3-7-sonnet-latest"),
+    // trajectoryModel: anthropic("claude-3-7-sonnet-latest"),
+    trajectoryModel: google("gemini-2.0-flash"),
   }
 ) {
   const prompt = `You are a helpful assistant that can browse the web.
@@ -48,10 +48,6 @@ export async function main(
 		You may not need to browse the web at all; you may already know the answer.
 		Do not ask follow up questions; I trust your judgement.
 	  `;
-  const stagehand = new Stagehand({
-    ...StagehandConfig,
-  });
-  await stagehand.init();
   const page = stagehand.page;
 
   const result = streamText({
@@ -66,8 +62,6 @@ export async function main(
       // Add token usage data here
     },
     onFinish: async (result) => {
-      console.log("\n\n\n---FINISHED---");
-      await stagehand.close();
       const cleanedResult = result.response.messages.map((m) => {
         if (m.role === "tool") {
           return {

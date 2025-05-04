@@ -1,5 +1,5 @@
 import { Page, Stagehand } from "@browserbasehq/stagehand";
-import { generateId, generateText, LanguageModel, tool } from "ai";
+import { generateText, LanguageModel, tool } from "ai";
 import { z } from "zod";
 
 const log = (action: string, ...args: unknown[]) => {
@@ -18,14 +18,6 @@ export const getTools = (
   stagehand: Stagehand,
   model: LanguageModel
 ) => ({
-  stagehand_close: tool({
-    description: "End the browser session",
-    parameters: z.object({}),
-    execute: async () => {
-      await stagehand.close();
-      return "Closed the browser session";
-    },
-  }),
   stagehand_wait: tool({
     description:
       "Wait for a specific amount of time. Useful when you need to wait for a page to load or for an element to be visible.",
@@ -60,6 +52,50 @@ export const getTools = (
         ),
       ]);
       return `Navigated to: ${url}`;
+    },
+    experimental_toToolResultContent: (result) => {
+      return [{ type: "text", text: result }];
+    },
+  }),
+  stagehand_plan_next_step: tool({
+    description:
+      "Analyze the current page and decide what actions to take next",
+    parameters: z.object({}),
+    execute: async () => {
+      log("PLAN_NEXT_STEP", page.url());
+      // Take a screenshot of the current page
+      const screenshotBuffer = await page.screenshot();
+      const base64Screenshot = screenshotBuffer.toString("base64");
+
+      // Get the current URL
+      const currentUrl = page.url();
+
+      // Use generateText with the model to analyze the page
+      const analysis = await generateText({
+        model: model,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `You are looking at a screenshot of a web page (${currentUrl}). 
+        Analyze what you can see and provide a clear plan for what actions to take next.
+        Focus on identifying key interactive elements and suggesting 1-3 specific actions 
+        the user could take, such as clicking specific buttons, filling forms, or navigating to 
+        different sections. Be concise and specific.`,
+              },
+              {
+                type: "image",
+                image: base64Screenshot,
+              },
+            ],
+          },
+        ],
+      });
+
+      log("PLAN_NEXT_STEP", analysis.text);
+      return analysis.text;
     },
     experimental_toToolResultContent: (result) => {
       return [{ type: "text", text: result }];
@@ -137,7 +173,6 @@ export const getTools = (
           page.act({
             action,
             variables,
-            slowDomBasedAct: false,
           }),
           new Promise((resolve) =>
             setTimeout(async () => {
