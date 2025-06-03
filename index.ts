@@ -1,9 +1,9 @@
 import { generateObject, LanguageModel, streamText } from "ai";
 import { Stagehand } from "@browserbasehq/stagehand";
 import { getTools } from "./tools.js";
-import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
+import { anthropic } from "@ai-sdk/anthropic";
 
 /**
  * Main function that executes an agent trajectory with Stagehand
@@ -27,11 +27,10 @@ export async function main(
       | "anthropic/claude-3-7-sonnet-latest"
       | "anthropic/claude-3-5-sonnet-latest";
   } = {
-    actionModel: openai("gpt-4o-mini"),
-    structuredOutputModel: openai("gpt-4o-mini"),
-    cuaModel: "openai/computer-use-preview",
-    // trajectoryModel: anthropic("claude-3-7-sonnet-latest"),
-    trajectoryModel: google("gemini-2.0-flash"),
+    actionModel: google("gemini-2.0-flash"),
+    structuredOutputModel: google("gemini-2.0-flash"),
+    cuaModel: "anthropic/claude-3-7-sonnet-latest",
+    trajectoryModel: anthropic("claude-3-7-sonnet-latest"),
   }
 ) {
   const prompt = `You are a helpful assistant that can browse the web.

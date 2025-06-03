@@ -5,7 +5,8 @@ A powerful browser automation agent built with [Stagehand](https://github.com/br
 ## 🚀 Installation
 
 ```bash
-npx stagehand-ai
+pnpm install
+pnpm run cli
 ```
 
 ## 🛠️ Usage
