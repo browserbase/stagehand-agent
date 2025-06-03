@@ -35,7 +35,7 @@ async function checkAndPromptApiKeys() {
     const anthropicKey = await question(
       chalk.yellow("No Anthropic API key found. ") +
         chalk.gray(
-          "We use Anthropic Claude 4 Sonnet to power our agent trajectory reasoning.\n\n"
+          "We use Anthropic Claude 3.7 Sonnet to power our agent's tool choice decisions.\n\n"
         ) +
         chalk.cyan("Please enter your Anthropic API key: ")
     );

@@ -18,7 +18,7 @@ pnpm run cli
 
 ![agent.png](./agent.png)
 
-- Trajectory Model: Claude 3.5 Sonnet
-- Action Model: GPT 4o Mini
-- Structured Output Model: GPT 4o Mini
-- CUA Model: OpenAI Computer Use Preview
+- Trajectory Model: Claude 3.7 Sonnet
+- Action Model: Gemini 2.0 Flash
+- Structured Output Model: Gemini 2.0 Flash
+- CUA Model: Claude 3.7 Sonnet
