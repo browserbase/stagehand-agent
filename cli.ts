@@ -8,6 +8,8 @@ import readline from "readline";
 import { main } from "./index.js";
 import dotenv from "dotenv";
 import chalk from "chalk";
+import { Stagehand } from "@browserbasehq/stagehand";
+import StagehandConfig from "./stagehand.config.js";
 
 // Load environment variables
 dotenv.config();
@@ -33,7 +35,7 @@ async function checkAndPromptApiKeys() {
     const anthropicKey = await question(
       chalk.yellow("No Anthropic API key found. ") +
         chalk.gray(
-          "We use Anthropic Claude 3.7 Sonnet to power our agent trajectory reasoning.\n\n"
+          "We use Anthropic Claude 4 Sonnet to power our agent trajectory reasoning.\n\n"
         ) +
         chalk.cyan("Please enter your Anthropic API key: ")
     );
@@ -41,15 +43,17 @@ async function checkAndPromptApiKeys() {
     envUpdated = true;
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    const openaiKey = await question(
-      chalk.yellow("No OpenAI API key found. ") +
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    const geminiKey = await question(
+      chalk.yellow("No Gemini API key found. ") +
         chalk.gray(
-          "We use OpenAI GPT-4o-mini to power our agent action execution.\n\n"
+          "We use Gemini 2.0 flash to power our agent action execution.\n\n"
         ) +
-        chalk.cyan("Please enter your OpenAI API key: ")
+        chalk.cyan(
+          "Please enter your Gemini API key (https://aistudio.google.com/apikey): "
+        )
     );
-    process.env.OPENAI_API_KEY = openaiKey;
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY = geminiKey;
     envUpdated = true;
   }
 
@@ -63,28 +67,27 @@ async function checkAndPromptApiKeys() {
 const queryFromArgs = process.argv[2];
 
 async function run() {
-  console.log("🤘 Welcome to", chalk.yellow("Stagehand!"), "🤘");
-  console.log(chalk.gray("\nLoading..."));
-  const spinner = ["|", "/", "-", "\\"];
-  let i = 0;
-  const loadingInterval = setInterval(() => {
-    process.stdout.write(`\r${spinner[i++ % spinner.length]}`);
-  }, 100);
-  // Clear interval after 2 seconds
-  await new Promise((resolve) =>
-    setTimeout(() => {
-      clearInterval(loadingInterval);
-      process.stdout.write("\r"); // Clear the spinner
-      resolve(true);
-    }, 3000)
-  );
+  console.log("🤘 Welcome to Stagehand!");
+  console.log("Setting up your environment...");
   await checkAndPromptApiKeys();
 
+  const stagehand = new Stagehand({
+    ...StagehandConfig,
+  });
+  await stagehand.init();
+
+  if (stagehand.browserbaseSessionID) {
+    console.log(
+      `Browserbase session: https://www.browserbase.com/sessions/${stagehand.browserbaseSessionID}`
+    );
+  }
+
   if (queryFromArgs) {
-    main(queryFromArgs);
+    main(queryFromArgs, stagehand);
   } else {
     const query = await question(chalk.yellow("\n\nEnter your query: "));
-    main(query);
+    await main(query, stagehand);
+    await stagehand.close();
     rl.close();
   }
 }
